@@ -1,0 +1,104 @@
+#include<iostream>
+#include<string>
+#define RECT true
+#define CIRCLE false
+#define LEFT 0
+#define RIGHT 1
+#define CONVEX 1
+#define CONCAVE -1
+#define FLAT 0
+using namespace std;
+class SideOfBlock
+ {
+       int curve;//FLAT,CONVEX,CONCAVE
+       bool shape;//RECT or CIRCLE
+public:
+       SideOfBlock()
+       {
+         curve=0; shape=RECT;
+       }
+friend class BlockObject;
+friend class SequenceValidator; 
+};
+
+class BlockObject
+{
+//Every Block will have 2 sides left and right
+  SideOfBlock side[2];
+public:
+  void setValues(int orientation,int curve,bool shape)
+  {
+    side[orientation].curve=curve;
+    side[orientation].shape=shape;
+  }
+friend class SequenceValidator;
+};
+
+class SequenceValidator
+{
+  BlockObject blocks[9];//need 9 because block numbering from 1
+  bool canLock(BlockObject obj1,BlockObject obj2)
+  {
+       if( obj1.side[RIGHT].shape == obj2.side[LEFT].shape )
+       {
+           if(obj1.side[RIGHT].curve != obj2.side[LEFT].curve)
+                   return true;
+       }
+       return false;
+  }
+public:
+  SequenceValidator()
+  {
+     //get information regarding the blocks filled up
+     blocks[1].setValues(LEFT,FLAT,RECT);
+     blocks[2].setValues(LEFT,CONCAVE,RECT);
+     blocks[3].setValues(LEFT,CONCAVE,RECT);
+     blocks[4].setValues(LEFT,CONVEX,RECT);
+     blocks[5].setValues(LEFT,CONVEX,RECT);
+     blocks[6].setValues(LEFT,CONCAVE,CIRCLE);
+     blocks[7].setValues(LEFT,CONCAVE,CIRCLE);
+     blocks[8].setValues(LEFT,CONVEX,CIRCLE);
+//   --------------------------------------------------------------------
+     blocks[1].setValues(RIGHT,CONCAVE,RECT);
+     blocks[2].setValues(RIGHT,FLAT,RECT);
+     blocks[3].setValues(RIGHT,CONCAVE,RECT);
+     blocks[4].setValues(RIGHT,CONVEX,RECT);
+     blocks[5].setValues(RIGHT,CONCAVE,CIRCLE);
+     blocks[6].setValues(RIGHT,CONVEX,RECT);
+     blocks[7].setValues(RIGHT,CONCAVE,CIRCLE);
+     blocks[8].setValues(RIGHT,CONVEX,CIRCLE);
+  }
+  
+  string checkSequence(string input)
+  {
+       int block1,block2;
+       block1=input[0]-'0';
+       block2=input[1]-'0';
+       for(int i=2;i<input.length();i++)
+       {
+         if( canLock( blocks[block1], blocks[block2] ) == false )
+                     return " NOT";
+         block1=block2;
+         block2=input[i]-'0';
+       }
+       
+      if(blocks[block2].side[RIGHT].curve==CONCAVE)
+          return " NOT";
+       return " VALID";
+  }
+  
+};
+int main()
+{
+ SequenceValidator sv;
+ string input("");
+ int resultNo=1;
+ while(1)
+ {
+    cin>>input;
+    if( input.compare("0")!=0 )
+      cout<<resultNo<<sv.checkSequence(input)<<endl;
+    else break;
+ }
+ return 0;
+}
