@@ -1,3 +1,8 @@
+/*
+Question format:
+https://drive.google.com/file/d/0B9Q70CnGao5WU2w5R2JBWkJIb3M/edit?usp=sharing
+https://drive.google.com/file/d/0B9Q70CnGao5WcHFrcXlOM1lJNnc/edit?usp=sharing
+*/
 #include<iostream>
 #include<string>
 #define RECT true
